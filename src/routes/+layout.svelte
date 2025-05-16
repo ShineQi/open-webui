@@ -237,7 +237,7 @@
 					toast.custom(NotificationToast, {
 						componentProps: {
 							onClick: () => {
-								goto(`/c/${event.chat_id}`);
+								goto(`${WEBUI_HOSTNAME_PATH}/c/${event.chat_id}`);
 							},
 							content: content,
 							title: title
@@ -412,7 +412,7 @@
 			user.set(null);
 
 			localStorage.removeItem('token');
-			location.href = '/auth';
+			location.href = WEBUI_BASE_URL + '/auth';
 		}
 	};
 
@@ -541,19 +541,19 @@
 					} else {
 						// Redirect Invalid Session User to /auth Page
 						localStorage.removeItem('token');
-						await goto(`/auth?redirect=${encodedUrl}`);
+						await goto(WEBUI_BASE_URL + `/auth?redirect=${encodedUrl}`);
 					}
 				} else {
 					// Don't redirect if we're already on the auth page
 					// Needed because we pass in tokens from OAuth logins via URL fragments
-					if ($page.url.pathname !== '/auth') {
-						await goto(`/auth?redirect=${encodedUrl}`);
+					if ($page.url.pathname !== WEBUI_BASE_URL + '/auth') {
+						await goto(WEBUI_BASE_URL + '/auth');
 					}
 				}
 			}
 		} else {
 			// Redirect to /error when Backend Not Detected
-			await goto(`/error`);
+			await goto(`${WEBUI_BASE_URL}/error`);
 		}
 
 		await tick();
