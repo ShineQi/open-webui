@@ -57,7 +57,7 @@
 
 	onMount(async () => {
 		if ($user === undefined || $user === null) {
-			await goto('/auth');
+			await goto(WEBUI_BASE_URL + '/auth');
 		} else if (['user', 'admin'].includes($user?.role)) {
 			try {
 				// Check if IndexedDB exists
@@ -184,7 +184,7 @@
 					event.preventDefault();
 					console.log('temporaryChat');
 					temporaryChatEnabled.set(!$temporaryChatEnabled);
-					await goto('/');
+					await goto(WEBUI_BASE_URL + '/');
 					const newChatButton = document.getElementById('new-chat-button');
 					setTimeout(() => {
 						newChatButton?.click();

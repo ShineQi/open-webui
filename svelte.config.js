@@ -14,8 +14,13 @@ const config = {
 			pages: 'build',
 			assets: 'build',
 			fallback: 'index.html'
-		})
+		}),
+		paths: {
+			base: "/openwebui",
+			relative: true,
+		}
 	},
+
 	vitePlugin: {
 		// inspector: {
 		// 	toggleKeyCombo: 'meta-shift', // Key combination to open the inspector

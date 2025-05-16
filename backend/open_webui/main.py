@@ -1496,13 +1496,13 @@ async def get_manifest_json():
             "orientation": "any",
             "icons": [
                 {
-                    "src": "/static/logo.png",
+                    "src": "static/logo.png",
                     "type": "image/png",
                     "sizes": "500x500",
                     "purpose": "any",
                 },
                 {
-                    "src": "/static/logo.png",
+                    "src": "static/logo.png",
                     "type": "image/png",
                     "sizes": "500x500",
                     "purpose": "maskable",
@@ -1545,15 +1545,16 @@ def swagger_ui_html(*args, **kwargs):
     return get_swagger_ui_html(
         *args,
         **kwargs,
-        swagger_js_url="/static/swagger-ui/swagger-ui-bundle.js",
-        swagger_css_url="/static/swagger-ui/swagger-ui.css",
-        swagger_favicon_url="/static/swagger-ui/favicon.png",
+        swagger_js_url="static/swagger-ui/swagger-ui-bundle.js",
+        swagger_css_url="static/swagger-ui/swagger-ui.css",
+        swagger_favicon_url="static/swagger-ui/favicon.png",
     )
 
 
 applications.get_swagger_ui_html = swagger_ui_html
 
 if os.path.exists(FRONTEND_BUILD_DIR):
+    log.info(f"Serving frontend build from '{FRONTEND_BUILD_DIR}'")
     mimetypes.add_type("text/javascript", ".js")
     app.mount(
         "/",
