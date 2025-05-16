@@ -20,6 +20,7 @@ from open_webui.env import (
     WEBSOCKET_REDIS_LOCK_TIMEOUT,
     WEBSOCKET_SENTINEL_PORT,
     WEBSOCKET_SENTINEL_HOSTS,
+    ROOT_PATH,
 )
 from open_webui.utils.auth import decode_token
 from open_webui.socket.utils import RedisDict, RedisLock
@@ -147,7 +148,7 @@ async def periodic_usage_pool_cleanup():
 
 app = socketio.ASGIApp(
     sio,
-    socketio_path="/ws/socket.io",
+    socketio_path = f"{ROOT_PATH}/ws/socket.io" if ROOT_PATH != "/" else "/ws/socket.io",
 )
 
 

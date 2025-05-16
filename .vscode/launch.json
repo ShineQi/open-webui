@@ -10,11 +10,13 @@
             "request": "launch",
             "program": "${file}",
             "env": {
-                "ROOT_PATH": "openwebui",
+                "ROOT_PATH": "/openwebui",
+                "FRONTEND_BUILD_DIR": "${workspaceFolder}/build",
                 "DATA_DIR": "${workspaceFolder}/backend/open_webui/data",
             },
             "console": "integratedTerminal",
-            "args": "${command:pickArgs}"
+            "args": "${command:pickArgs}",
+            "justMyCode": false,
         }
     ]
 }

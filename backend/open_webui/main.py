@@ -373,6 +373,7 @@ from open_webui.env import (
     OFFLINE_MODE,
     ENABLE_OTEL,
     EXTERNAL_PWA_MANIFEST_URL,
+    ROOT_PATH,
 )
 
 
@@ -478,6 +479,7 @@ app = FastAPI(
     docs_url="/docs" if ENV == "dev" else None,
     openapi_url="/openapi.json" if ENV == "dev" else None,
     redoc_url=None,
+    root_path=ROOT_PATH,
     lifespan=lifespan,
 )
 
