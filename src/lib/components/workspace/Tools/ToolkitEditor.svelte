@@ -2,7 +2,7 @@
 	import { getContext, onMount, tick } from 'svelte';
 
 	const i18n = getContext('i18n');
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	import CodeEditor from '$lib/components/common/CodeEditor.svelte';
 	import { goto } from '$app/navigation';
 	import ConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';

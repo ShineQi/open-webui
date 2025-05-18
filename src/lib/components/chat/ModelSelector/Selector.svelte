@@ -2,7 +2,7 @@
 	import { DropdownMenu } from 'bits-ui';
 	import { marked } from 'marked';
 	import Fuse from 'fuse.js';
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	import { flyAndScale } from '$lib/utils/transitions';
 	import { createEventDispatcher, onMount, getContext, tick } from 'svelte';
 

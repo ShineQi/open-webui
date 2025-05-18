@@ -1,6 +1,7 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
+import { createHtmlPlugin } from 'vite-plugin-html';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 // /** @type {import('vite').Plugin} */
@@ -18,9 +19,9 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 // };
 
 export default defineConfig({
-	base: "./",
 	plugins: [
 		sveltekit(),
+		createHtmlPlugin(),
 		viteStaticCopy({
 			targets: [
 				{

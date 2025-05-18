@@ -473,7 +473,6 @@ async def lifespan(app: FastAPI):
 
     yield
 
-
 app = FastAPI(
     title="Open WebUI",
     docs_url="/docs" if ENV == "dev" else None,

@@ -561,3 +561,7 @@ EXTERNAL_PWA_MANIFEST_URL = os.environ.get("EXTERNAL_PWA_MANIFEST_URL")
 AZURE_OPENAI_API_VERSION = os.environ.get("AZURE_OPENAI_API_VERSION", "2023-03-15-preview")
 
 ROOT_PATH = os.environ.get("ROOT_PATH", "/")
+log.warning(f"ROOT_PATH is {ROOT_PATH}")
+if not ROOT_PATH.startswith("/"):
+    log.warning(f"ROOT_PATH not start with /, setting to /{ROOT_PATH}")
+    ROOT_PATH="/"+ROOT_PATH

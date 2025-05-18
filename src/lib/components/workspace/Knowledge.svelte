@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Fuse from 'fuse.js';
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	import dayjs from 'dayjs';
 	import relativeTime from 'dayjs/plugin/relativeTime';
 	dayjs.extend(relativeTime);
@@ -133,7 +133,7 @@
 							)
 						);
 					} else {
-						goto(`/workspace/knowledge/${item.id}`);
+						goto(`${WEBUI_BASE_URL}/workspace/knowledge/${item.id}`);
 					}
 				}}
 			>

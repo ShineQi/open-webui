@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { getContext } from 'svelte';
 	const i18n = getContext('i18n');
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	import { createNewKnowledge, getKnowledgeBases } from '$lib/apis/knowledge';
 	import { toast } from 'svelte-sonner';
 	import { knowledge, user } from '$lib/stores';
