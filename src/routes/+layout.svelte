@@ -432,7 +432,7 @@
 				toast.custom(NotificationToast, {
 					componentProps: {
 						onClick: () => {
-							goto(`/channels/${event.channel_id}`);
+							goto(`${WEBUI_BASE_URL}/channels/${event.channel_id}`);
 						},
 						content: data?.content,
 						title: event?.channel?.name

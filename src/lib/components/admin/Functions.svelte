@@ -333,7 +333,7 @@
 					<FunctionMenu
 						{func}
 						editHandler={() => {
-							goto(`/admin/functions/edit?id=${encodeURIComponent(func.id)}`);
+							goto(`${WEBUI_BASE_URL}/admin/functions/edit?id=${encodeURIComponent(func.id)}`);
 						}}
 						shareHandler={() => {
 							shareHandler(func);

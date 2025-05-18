@@ -117,7 +117,7 @@
 			note = res;
 			files = res.data.files || [];
 		} else {
-			goto('/');
+			goto(`${WEBUI_BASE_URL}/`);
 			return;
 		}
 
