@@ -2,7 +2,7 @@
 	import { toast } from 'svelte-sonner';
 	import { onMount, getContext, tick, onDestroy } from 'svelte';
 	const i18n = getContext('i18n');
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	import { page } from '$app/stores';
 	import { mobile, showSidebar, user } from '$lib/stores';
 	import { updateChannelById } from '$lib/apis/channels';
@@ -44,13 +44,13 @@
 <div
 	bind:this={itemElement}
 	class=" w-full {className} rounded-lg flex relative group hover:bg-gray-100 dark:hover:bg-gray-900 {$page
-		.url.pathname === `/channels/${channel.id}`
+		.url.pathname === `${WEBUI_BASE_URL}/channels/${channel.id}`
 		? 'bg-gray-100 dark:bg-gray-900'
 		: ''} px-2.5 py-1"
 >
 	<a
 		class=" w-full flex justify-between"
-		href="/channels/{channel.id}"
+		href="{WEBUI_BASE_URL}/channels/{channel.id}"
 		on:click={() => {
 			if ($mobile) {
 				showSidebar.set(false);

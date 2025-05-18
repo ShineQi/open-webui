@@ -9,6 +9,7 @@
 	import { getModels } from '$lib/apis';
 
 	import ModelEditor from '$lib/components/workspace/Models/ModelEditor.svelte';
+	import { WEBUI_BASE_URL } from '$lib/constants';
 
 	const i18n = getContext('i18n');
 
@@ -30,7 +31,7 @@
 				...modelInfo,
 				meta: {
 					...modelInfo.meta,
-					profile_image_url: modelInfo.meta.profile_image_url ?? 'static/favicon.png',
+					profile_image_url: modelInfo.meta.profile_image_url ?? `${WEBUI_BASE_URL}/static/favicon.png`,
 					suggestion_prompts: modelInfo.meta.suggestion_prompts
 						? modelInfo.meta.suggestion_prompts.filter((prompt) => prompt.content !== '')
 						: null

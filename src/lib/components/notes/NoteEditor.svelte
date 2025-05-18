@@ -455,7 +455,7 @@
 
 		if (res) {
 			toast.success($i18n.t('Note deleted successfully'));
-			goto('/notes');
+			goto(WEBUI_API_BASE_URL+'/notes');
 		} else {
 			toast.error($i18n.t('Failed to delete note'));
 		}

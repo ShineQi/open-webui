@@ -275,7 +275,7 @@
 										>
 											{#if $shortCodesToEmojis[reaction.name]}
 												<img
-													src="/assets/emojis/{$shortCodesToEmojis[
+													src="{WEBUI_BASE_URL}/assets/emojis/{$shortCodesToEmojis[
 														reaction.name
 													].toLowerCase()}.svg"
 													alt={reaction.name}

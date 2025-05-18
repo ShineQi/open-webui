@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Fuse from 'fuse.js';
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { tick, getContext } from 'svelte';
 
@@ -91,7 +91,7 @@
 						>
 							<div class="flex font-medium text-black dark:text-gray-100 line-clamp-1">
 								<img
-									src={model?.info?.meta?.profile_image_url ?? 'static/favicon.png'}
+									src={model?.info?.meta?.profile_image_url ?? `${WEBUI_BASE_URL}/static/favicon.png`}
 									alt={model?.name ?? model.id}
 									class="rounded-full size-6 items-center mr-2"
 								/>

@@ -11,6 +11,7 @@
 	import { toast } from 'svelte-sonner';
 	import AccessControl from '$lib/components/workspace/common/AccessControl.svelte';
 	import ConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
+	import { WEBUI_API_BASE_URL } from '$lib/constants';
 
 	export let show = false;
 	export let edit = false;
@@ -90,7 +91,7 @@
 
 		name = '';
 		id = '';
-		profileImageUrl = '/favicon.png';
+		profileImageUrl = `${WEBUI_API_BASE_URL}/favicon.png`;
 		description = '';
 		modelIds = [];
 		selectedModelId = '';
