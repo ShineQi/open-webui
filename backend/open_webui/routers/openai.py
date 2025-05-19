@@ -401,27 +401,21 @@ async def get_all_models_responses(request: Request, user: UserModel) -> list:
                 ),  # Legacy support
             )
 
+            connection_type = api_config.get("connection_type", "external")
             prefix_id = api_config.get("prefix_id", None)
             tags = api_config.get("tags", [])
 
-            # Add Azure tag for Azure OpenAI endpoints
-            if is_azure_openai_url(url) and "azure" not in tags:
-                if not tags:
-                    tags = ["azure"]
-                else:
-                    tags.append("azure")
-
-            if prefix_id:
-                for model in (
-                    response if isinstance(response, list) else response.get("data", [])
-                ):
+            for model in (
+                response if isinstance(response, list) else response.get("data", [])
+            ):
+                if prefix_id:
                     model["id"] = f"{prefix_id}.{model['id']}"
 
-            if tags:
-                for model in (
-                    response if isinstance(response, list) else response.get("data", [])
-                ):
+                if tags:
                     model["tags"] = tags
+
+                if connection_type:
+                    model["connection_type"] = connection_type
 
     log.debug(f"get_all_models:responses() {responses}")
     return responses
@@ -470,6 +464,7 @@ async def get_all_models(request: Request, user: UserModel) -> dict[str, list]:
                             "name": model.get("name", model["id"]),
                             "owned_by": "openai",
                             "openai": model,
+                            "connection_type": model.get("connection_type", "external"),
                             "urlIdx": idx,
                         }
                         for model in models
@@ -516,73 +511,42 @@ async def get_models(
         url = request.app.state.config.OPENAI_API_BASE_URLS[url_idx]
         key = request.app.state.config.OPENAI_API_KEYS[url_idx]
 
+        api_config = request.app.state.config.OPENAI_API_CONFIGS.get(
+            str(url_idx),
+            request.app.state.config.OPENAI_API_CONFIGS.get(url, {}),  # Legacy support
+        )
+
         r = None
         async with aiohttp.ClientSession(
             trust_env=True,
             timeout=aiohttp.ClientTimeout(total=AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST),
         ) as session:
             try:
-                # Check if this is an Azure OpenAI URL
-                if is_azure_openai_url(url):
-                    # For Azure OpenAI, we need to use the api-key header instead of Authorization
-                    headers = {
-                        "api-key": key,
-                        "Content-Type": "application/json",
-                        **(
-                            {
-                                "X-OpenWebUI-User-Name": user.name,
-                                "X-OpenWebUI-User-Id": user.id,
-                                "X-OpenWebUI-User-Email": user.email,
-                                "X-OpenWebUI-User-Role": user.role,
-                            }
-                            if ENABLE_FORWARD_USER_INFO_HEADERS
-                            else {}
-                        ),
+                headers = {
+                    "Content-Type": "application/json",
+                    **(
+                        {
+                            "X-OpenWebUI-User-Name": user.name,
+                            "X-OpenWebUI-User-Id": user.id,
+                            "X-OpenWebUI-User-Email": user.email,
+                            "X-OpenWebUI-User-Role": user.role,
+                        }
+                        if ENABLE_FORWARD_USER_INFO_HEADERS
+                        else {}
+                    ),
+                }
+
+                if api_config.get("azure", False):
+                    models = {
+                        "data": api_config.get("model_ids", []) or [],
+                        "object": "list",
                     }
-                    # For Azure OpenAI, we need to use the deployments endpoint with api-version
-                    azure_url = f"{url}/openai/deployments?api-version=2023-03-15-preview"
-                    async with session.get(
-                        azure_url,
-                        headers=headers,
-                        ssl=AIOHTTP_CLIENT_SESSION_SSL,
-                    ) as r:
-                        if r.status != 200:
-                            # Extract response error details if available
-                            error_detail = f"HTTP Error: {r.status}"
-                            res = await r.json()
-                            if "error" in res:
-                                error_detail = f"External Error: {res['error']}"
-                            raise Exception(error_detail)
-
-                        response_data = await r.json()
-
-                        # Add Azure tag to models
-                        if "data" in response_data:
-                            for model in response_data["data"]:
-                                if "tags" not in model:
-                                    model["tags"] = ["azure"]
-                                elif "azure" not in model["tags"]:
-                                    model["tags"].append("azure")
-
-                        models = response_data
                 else:
-                    # Standard OpenAI API
+                    headers["Authorization"] = f"Bearer {key}"
+
                     async with session.get(
                         f"{url}/models",
-                        headers={
-                            "Authorization": f"Bearer {key}",
-                            "Content-Type": "application/json",
-                            **(
-                                {
-                                    "X-OpenWebUI-User-Name": user.name,
-                                    "X-OpenWebUI-User-Id": user.id,
-                                    "X-OpenWebUI-User-Email": user.email,
-                                    "X-OpenWebUI-User-Role": user.role,
-                                }
-                                if ENABLE_FORWARD_USER_INFO_HEADERS
-                                else {}
-                            ),
-                        },
+                        headers=headers,
                         ssl=AIOHTTP_CLIENT_SESSION_SSL,
                     ) as r:
                         if r.status != 200:
@@ -636,6 +600,8 @@ class ConnectionVerificationForm(BaseModel):
     url: str
     key: str
 
+    config: Optional[dict] = None
+
 
 @router.post("/verify")
 async def verify_connection(
@@ -644,32 +610,33 @@ async def verify_connection(
     url = form_data.url
     key = form_data.key
 
+    api_config = form_data.config or {}
+
     async with aiohttp.ClientSession(
         trust_env=True,
         timeout=aiohttp.ClientTimeout(total=AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST),
     ) as session:
         try:
-            # Check if this is an Azure OpenAI URL
-            if is_azure_openai_url(url):
-                # For Azure OpenAI, we need to use the api-key header instead of Authorization
-                headers = {
-                    "api-key": key,
-                    "Content-Type": "application/json",
-                    **(
-                        {
-                            "X-OpenWebUI-User-Name": user.name,
-                            "X-OpenWebUI-User-Id": user.id,
-                            "X-OpenWebUI-User-Email": user.email,
-                            "X-OpenWebUI-User-Role": user.role,
-                        }
-                        if ENABLE_FORWARD_USER_INFO_HEADERS
-                        else {}
-                    ),
-                }
-                # For Azure OpenAI, we need to use the models endpoint with api-version
-                azure_url = f"{url}/openai/models?api-version={AZURE_OPENAI_API_VERSION}"
+            headers = {
+                "Content-Type": "application/json",
+                **(
+                    {
+                        "X-OpenWebUI-User-Name": user.name,
+                        "X-OpenWebUI-User-Id": user.id,
+                        "X-OpenWebUI-User-Email": user.email,
+                        "X-OpenWebUI-User-Role": user.role,
+                    }
+                    if ENABLE_FORWARD_USER_INFO_HEADERS
+                    else {}
+                ),
+            }
+
+            if api_config.get("azure", False):
+                headers["api-key"] = key
+                api_version = api_config.get("api_version", "") or "2023-03-15-preview"
+
                 async with session.get(
-                    azure_url,
+                    url=f"{url}/openai/models?api-version={api_version}",
                     headers=headers,
                     ssl=AIOHTTP_CLIENT_SESSION_SSL,
                 ) as r:
@@ -684,23 +651,11 @@ async def verify_connection(
                     response_data = await r.json()
                     return response_data
             else:
-                # Standard OpenAI API
+                headers["Authorization"] = f"Bearer {key}"
+
                 async with session.get(
                     f"{url}/models",
-                    headers={
-                        "Authorization": f"Bearer {key}",
-                        "Content-Type": "application/json",
-                        **(
-                            {
-                                "X-OpenWebUI-User-Name": user.name,
-                                "X-OpenWebUI-User-Id": user.id,
-                                "X-OpenWebUI-User-Email": user.email,
-                                "X-OpenWebUI-User-Role": user.role,
-                            }
-                            if ENABLE_FORWARD_USER_INFO_HEADERS
-                            else {}
-                        ),
-                    },
+                    headers=headers,
                     ssl=AIOHTTP_CLIENT_SESSION_SSL,
                 ) as r:
                     if r.status != 200:
@@ -724,6 +679,63 @@ async def verify_connection(
             log.exception(f"Unexpected error: {e}")
             error_detail = f"Unexpected error: {str(e)}"
             raise HTTPException(status_code=500, detail=error_detail)
+
+
+def convert_to_azure_payload(
+    url,
+    payload: dict,
+):
+    model = payload.get("model", "")
+
+    # Filter allowed parameters based on Azure OpenAI API
+    allowed_params = {
+        "messages",
+        "temperature",
+        "role",
+        "content",
+        "contentPart",
+        "contentPartImage",
+        "enhancements",
+        "dataSources",
+        "n",
+        "stream",
+        "stop",
+        "max_tokens",
+        "presence_penalty",
+        "frequency_penalty",
+        "logit_bias",
+        "user",
+        "function_call",
+        "functions",
+        "tools",
+        "tool_choice",
+        "top_p",
+        "log_probs",
+        "top_logprobs",
+        "response_format",
+        "seed",
+        "max_completion_tokens",
+    }
+
+    # Special handling for o-series models
+    if model.startswith("o") and model.endswith("-mini"):
+        # Convert max_tokens to max_completion_tokens for o-series models
+        if "max_tokens" in payload:
+            payload["max_completion_tokens"] = payload["max_tokens"]
+            del payload["max_tokens"]
+
+        # Remove temperature if not 1 for o-series models
+        if "temperature" in payload and payload["temperature"] != 1:
+            log.debug(
+                f"Removing temperature parameter for o-series model {model} as only default value (1) is supported"
+            )
+            del payload["temperature"]
+
+    # Filter out unsupported parameters
+    payload = {k: v for k, v in payload.items() if k in allowed_params}
+
+    url = f"{url}/openai/deployments/{model}"
+    return url, payload
 
 
 @router.post("/chat/completions")
@@ -826,48 +838,39 @@ async def generate_chat_completion(
             convert_logit_bias_input_to_json(payload["logit_bias"])
         )
 
-    # Check if this is an Azure OpenAI URL
-    is_azure = is_azure_openai_url(url)
+    headers = {
+        "Content-Type": "application/json",
+        **(
+            {
+                "HTTP-Referer": "https://openwebui.com/",
+                "X-Title": "Open WebUI",
+            }
+            if "openrouter.ai" in url
+            else {}
+        ),
+        **(
+            {
+                "X-OpenWebUI-User-Name": user.name,
+                "X-OpenWebUI-User-Id": user.id,
+                "X-OpenWebUI-User-Email": user.email,
+                "X-OpenWebUI-User-Role": user.role,
+            }
+            if ENABLE_FORWARD_USER_INFO_HEADERS
+            else {}
+        ),
+    }
 
-    # Prepare the request based on the API type
-    if is_azure:
-        # For Azure OpenAI, we need to format the URL and headers differently
-        formatted_url, payload_dict, headers = prepare_azure_openai_request(
-            url,
-            json.loads(
-                json.dumps(payload)
-            ),  # Convert to dict and back to ensure serialization
-            key,
-        )
-        payload = json.dumps(payload_dict)
-        request_url = formatted_url
+    if api_config.get("azure", False):
+        request_url, payload = convert_to_azure_payload(url, payload)
+        api_version = api_config.get("api_version", "") or "2023-03-15-preview"
+        headers["api-key"] = key
+        headers["api-version"] = api_version
+        request_url = f"{request_url}/chat/completions?api-version={api_version}"
     else:
-        # Standard OpenAI API - use original payload without Azure modifications
         request_url = f"{url}/chat/completions"
-        # Convert the payload to JSON string directly without Azure-specific filtering
-        payload = json.dumps(payload)
-        headers = {
-            "Authorization": f"Bearer {key}",
-            "Content-Type": "application/json",
-            **(
-                {
-                    "HTTP-Referer": "https://openwebui.com/",
-                    "X-Title": "Open WebUI",
-                }
-                if "openrouter.ai" in url
-                else {}
-            ),
-            **(
-                {
-                    "X-OpenWebUI-User-Name": user.name,
-                    "X-OpenWebUI-User-Id": user.id,
-                    "X-OpenWebUI-User-Email": user.email,
-                    "X-OpenWebUI-User-Role": user.role,
-                }
-                if ENABLE_FORWARD_USER_INFO_HEADERS
-                else {}
-            ),
-        }
+        headers["Authorization"] = f"Bearer {key}"
+
+    payload = json.dumps(payload)
 
     r = None
     session = None
@@ -939,87 +942,55 @@ async def proxy(path: str, request: Request, user=Depends(get_verified_user)):
     idx = 0
     url = request.app.state.config.OPENAI_API_BASE_URLS[idx]
     key = request.app.state.config.OPENAI_API_KEYS[idx]
+    api_config = request.app.state.config.OPENAI_API_CONFIGS.get(
+        str(idx),
+        request.app.state.config.OPENAI_API_CONFIGS.get(
+            request.app.state.config.OPENAI_API_BASE_URLS[idx], {}
+        ),  # Legacy support
+    )
 
     r = None
     session = None
     streaming = False
 
     try:
-        session = aiohttp.ClientSession(trust_env=True)
+        headers = {
+            "Content-Type": "application/json",
+            **(
+                {
+                    "X-OpenWebUI-User-Name": user.name,
+                    "X-OpenWebUI-User-Id": user.id,
+                    "X-OpenWebUI-User-Email": user.email,
+                    "X-OpenWebUI-User-Role": user.role,
+                }
+                if ENABLE_FORWARD_USER_INFO_HEADERS
+                else {}
+            ),
+        }
 
-        # Check if this is an Azure OpenAI URL
-        if is_azure_openai_url(url):
-            # For Azure OpenAI, we need to use a different URL format and headers
-            # This is a simplified approach - in a real implementation, you'd need to handle
-            # different API paths and versions more carefully
-            if path == "chat/completions":
-                # Extract model from body for Azure URL formatting
-                try:
-                    body_dict = json.loads(body)
-                    model = body_dict.get("model", "")
-                    formatted_url, body_dict, headers = prepare_azure_openai_request(
-                        url, body_dict, key
-                    )
-                    body = json.dumps(body_dict).encode()
-                    r = await session.request(
-                        method=request.method,
-                        url=formatted_url,
-                        data=body,
-                        headers=headers,
-                        ssl=AIOHTTP_CLIENT_SESSION_SSL,
-                    )
-                except Exception as e:
-                    log.error(f"Error processing Azure OpenAI request: {e}")
-                    raise HTTPException(
-                        status_code=500,
-                        detail=f"Error processing Azure OpenAI request: {str(e)}",
-                    )
-            else:
-                # For other paths, use the standard Azure format
-                azure_url = f"{url}/openai/{path}?api-version={AZURE_OPENAI_API_VERSION}"
-                r = await session.request(
-                    method=request.method,
-                    url=azure_url,
-                    data=body,
-                    headers={
-                        "api-key": key,
-                        "Content-Type": "application/json",
-                        **(
-                            {
-                                "X-OpenWebUI-User-Name": user.name,
-                                "X-OpenWebUI-User-Id": user.id,
-                                "X-OpenWebUI-User-Email": user.email,
-                                "X-OpenWebUI-User-Role": user.role,
-                            }
-                            if ENABLE_FORWARD_USER_INFO_HEADERS
-                            else {}
-                        ),
-                    },
-                    ssl=AIOHTTP_CLIENT_SESSION_SSL,
-                )
-        else:
-            # Standard OpenAI API
-            r = await session.request(
-                method=request.method,
-                url=f"{url}/{path}",
-                data=body,
-                headers={
-                    "Authorization": f"Bearer {key}",
-                    "Content-Type": "application/json",
-                    **(
-                        {
-                            "X-OpenWebUI-User-Name": user.name,
-                            "X-OpenWebUI-User-Id": user.id,
-                            "X-OpenWebUI-User-Email": user.email,
-                            "X-OpenWebUI-User-Role": user.role,
-                        }
-                        if ENABLE_FORWARD_USER_INFO_HEADERS
-                        else {}
-                    ),
-                },
-                ssl=AIOHTTP_CLIENT_SESSION_SSL,
+        if api_config.get("azure", False):
+            headers["api-key"] = key
+            headers["api-version"] = (
+                api_config.get("api_version", "") or "2023-03-15-preview"
             )
 
+            payload = json.loads(body)
+            url, payload = convert_to_azure_payload(url, payload)
+            body = json.dumps(payload).encode()
+
+            request_url = f"{url}/{path}?api-version={api_config.get('api_version', '2023-03-15-preview')}"
+        else:
+            headers["Authorization"] = f"Bearer {key}"
+            request_url = f"{url}/{path}"
+
+        session = aiohttp.ClientSession(trust_env=True)
+        r = await session.request(
+            method=request.method,
+            url=request_url,
+            data=body,
+            headers=headers,
+            ssl=AIOHTTP_CLIENT_SESSION_SSL,
+        )
         r.raise_for_status()
 
         # Check if response is SSE

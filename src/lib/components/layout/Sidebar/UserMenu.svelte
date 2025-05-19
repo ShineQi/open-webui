@@ -157,11 +157,11 @@
 			<button
 				class="flex rounded-md py-2 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition"
 				on:click={async () => {
-					await userSignOut();
+					const res = await userSignOut();
 					user.set(null);
-
 					localStorage.removeItem('token');
-					location.href = WEBUI_BASE_URL + '/auth';
+
+					location.href = res?.redirect_url ?? WEBUI_BASE_URL + '/auth';
 					show = false;
 				}}
 			>
