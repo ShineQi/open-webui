@@ -7,7 +7,7 @@
 	import { compareVersion, extractFrontmatter } from '$lib/utils';
 	import { onMount, getContext } from 'svelte';
 	import { toast } from 'svelte-sonner';
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	const i18n = getContext('i18n');
 
 	let mounted = false;

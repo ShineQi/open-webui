@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { prompts } from '$lib/stores';
 	import { onMount, tick, getContext } from 'svelte';
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	const i18n = getContext('i18n');
 
 	import { getPromptByCommand, getPrompts, updatePromptByCommand } from '$lib/apis/prompts';

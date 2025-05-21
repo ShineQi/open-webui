@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	onMount(() => {
 		// Get the current URL search parameters
 		const params = new URLSearchParams(window.location.search);
