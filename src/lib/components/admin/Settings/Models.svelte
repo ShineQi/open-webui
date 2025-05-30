@@ -20,6 +20,7 @@
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import Switch from '$lib/components/common/Switch.svelte';
 	import Spinner from '$lib/components/common/Spinner.svelte';
+	import XMark from '$lib/components/icons/XMark.svelte';
 
 	import ModelEditor from '$lib/components/workspace/Models/ModelEditor.svelte';
 	import { toast } from 'svelte-sonner';
@@ -34,6 +35,7 @@
 	import EyeSlash from '$lib/components/icons/EyeSlash.svelte';
 	import Eye from '$lib/components/icons/Eye.svelte';
 	import { WEBUI_API_BASE_URL } from '$lib/constants';
+	import { copyToClipboard } from '$lib/utils';
 
 	let shiftKey = false;
 
@@ -182,6 +184,17 @@
 		upsertModelHandler(model);
 	};
 
+	const copyLinkHandler = async (model) => {
+		const baseUrl = window.location.origin;
+		const res = await copyToClipboard(`${baseUrl}/?model=${encodeURIComponent(model.id)}`);
+
+		if (res) {
+			toast.success($i18n.t('Copied link to clipboard'));
+		} else {
+			toast.error($i18n.t('Failed to copy link'));
+		}
+	};
+
 	const exportModelHandler = async (model) => {
 		let blob = new Blob([JSON.stringify([model])], {
 			type: 'application/json'
@@ -272,6 +285,18 @@
 						bind:value={searchValue}
 						placeholder={$i18n.t('Search Models')}
 					/>
+					{#if searchValue}
+						<div class="self-center pl-1.5 translate-y-[0.5px] rounded-l-xl bg-transparent">
+							<button
+								class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+								on:click={() => {
+									searchValue = '';
+								}}
+							>
+								<XMark className="size-3" strokeWidth="2" />
+							</button>
+						</div>
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -381,6 +406,9 @@
 									}}
 									hideHandler={() => {
 										hideModelHandler(model);
+									}}
+									copyLinkHandler={() => {
+										copyLinkHandler(model);
 									}}
 									onClose={() => {}}
 								>
