@@ -34,6 +34,8 @@ def main(
 def serve(
     host: str = "0.0.0.0",
     port: int = 8080,
+    ssl_keyfile: str = "",
+    ssl_certfile: str = ""
 ):
     os.environ["FROM_INIT_PY"] = "true"
     if os.getenv("WEBUI_SECRET_KEY") is None:
@@ -74,14 +76,24 @@ def serve(
 
     import open_webui.main  # we need set environment variables before importing main
     from open_webui.env import UVICORN_WORKERS  # Import the workers setting
-
-    uvicorn.run(
-        "open_webui.main:app",
-        host=host,
-        port=port,
-        forwarded_allow_ips="*",
-        workers=UVICORN_WORKERS,
-    )
+    if ssl_certfile!="" and ssl_keyfile!="":
+        uvicorn.run(
+            "open_webui.main:app",
+            host=host,
+            port=port,
+            forwarded_allow_ips="*",
+            workers=UVICORN_WORKERS,
+            ssl_certfile=ssl_certfile,
+            ssl_keyfile=ssl_keyfile
+        )
+    else:
+        uvicorn.run(
+            "open_webui.main:app",
+            host=host,
+            port=port,
+            forwarded_allow_ips="*",
+            workers=UVICORN_WORKERS,
+        )
 
 
 @app.command()
