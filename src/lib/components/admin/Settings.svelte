@@ -215,7 +215,7 @@
 				? ''
 				: ' text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
 			on:click={() => {
-				goto('WEBUI_BASE_URL + /admin/settings/documents');
+				goto(WEBUI_BASE_URL + '/admin/settings/documents');
 			}}
 		>
 			<div class=" self-center mr-2">
