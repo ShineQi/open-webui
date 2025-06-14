@@ -12,7 +12,7 @@
             "env": {
                 "ROOT_PATH": "/openwebui",
                 "FRONTEND_BUILD_DIR": "${workspaceFolder}/build",
-                "DATA_DIR": "${workspaceFolder}/backend/open_webui/data",
+                "DATA_DIR": "D:\\open-webui\\data",
             },
             "console": "integratedTerminal",
             "args": "${command:pickArgs}",

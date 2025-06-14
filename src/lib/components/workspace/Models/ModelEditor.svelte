@@ -393,7 +393,7 @@
 								/>
 							{:else}
 								<img
-									src='{WEBUI_BASE_URL}/static/favicon.png'
+									src="{WEBUI_BASE_URL}/static/favicon.png"
 									alt="model profile"
 									class=" rounded-xl size-72 md:size-60 object-cover shrink-0"
 								/>
@@ -429,7 +429,7 @@
 							<button
 								class="px-2 py-1 text-gray-500 rounded-lg text-xs"
 								on:click={() => {
-									info.meta.profile_image_url = WEBUI_BASE_URL+'/static/favicon.png';
+									info.meta.profile_image_url = WEBUI_BASE_URL + '/static/favicon.png';
 								}}
 								type="button"
 							>

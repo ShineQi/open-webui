@@ -185,7 +185,7 @@
 		sessionStorage.tool = JSON.stringify({
 			...tool
 		});
-		goto('/workspace/tools/create');
+		goto(WEBUI_BASE_URL + '/workspace/tools/create');
 	}}
 	loadUrlHandler={async (url) => {
 		return await loadToolByUrl(localStorage.token, url);

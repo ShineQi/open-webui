@@ -77,7 +77,7 @@
 		clonedPrompt.command = slugify(`${baseCommand} clone`);
 
 		sessionStorage.prompt = JSON.stringify(clonedPrompt);
-		goto(WEBUI_BASE_URL +'/workspace/prompts/create');
+		goto(WEBUI_BASE_URL + '/workspace/prompts/create');
 	};
 
 	const exportHandler = async (prompt) => {
@@ -176,7 +176,9 @@
 				class=" flex space-x-4 cursor-pointer w-full px-3 py-2 dark:hover:bg-white/5 hover:bg-black/5 rounded-xl transition"
 			>
 				<div class=" flex flex-1 space-x-4 cursor-pointer w-full">
-					<a href={`${WEBUI_BASE_URL}/workspace/prompts/edit?command=${encodeURIComponent(prompt.command)}`}>
+					<a
+						href={`${WEBUI_BASE_URL}/workspace/prompts/edit?command=${encodeURIComponent(prompt.command)}`}
+					>
 						<div class=" flex-1 flex items-center gap-2 self-center">
 							<div class=" font-semibold line-clamp-1 capitalize">{prompt.title}</div>
 							<div class=" text-xs overflow-hidden text-ellipsis line-clamp-1">

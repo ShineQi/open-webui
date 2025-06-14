@@ -8,6 +8,8 @@
 
 	import { getAllFeedbacks } from '$lib/apis/evaluations';
 
+	import { WEBUI_BASE_URL } from '$lib/constants';
+
 	const i18n = getContext('i18n');
 
 	let selectedTab;
@@ -65,7 +67,7 @@
 					? ''
 					: ' text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
 				on:click={() => {
-					goto('/admin/evaluations/leaderboard');
+					goto(WEBUI_BASE_URL + '/admin/evaluations/leaderboard');
 				}}
 			>
 				<div class=" self-center mr-2">
@@ -92,7 +94,7 @@
 					? ''
 					: ' text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
 				on:click={() => {
-					goto('/admin/evaluations/feedbacks');
+					goto(WEBUI_BASE_URL + '/admin/evaluations/feedbacks');
 				}}
 			>
 				<div class=" self-center mr-2">

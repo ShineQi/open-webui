@@ -8,6 +8,7 @@
 
 	import UserList from './Users/UserList.svelte';
 	import Groups from './Users/Groups.svelte';
+	import { WEBUI_BASE_URL } from '$lib/constants';
 
 	const i18n = getContext('i18n');
 
@@ -67,7 +68,7 @@
 				? ''
 				: ' text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
 			on:click={() => {
-				goto('/admin/users/overview');
+				goto(WEBUI_BASE_URL + '/admin/users/overview');
 			}}
 		>
 			<div class=" self-center mr-2">
@@ -92,7 +93,7 @@
 				? ''
 				: ' text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
 			on:click={() => {
-				goto('/admin/users/groups');
+				goto(WEBUI_BASE_URL + '/admin/users/groups');
 			}}
 		>
 			<div class=" self-center mr-2">

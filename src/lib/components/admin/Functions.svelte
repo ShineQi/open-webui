@@ -37,6 +37,7 @@
 	import XMark from '../icons/XMark.svelte';
 	import AddFunctionMenu from './Functions/AddFunctionMenu.svelte';
 	import ImportModal from '../ImportModal.svelte';
+	import { WEBUI_API_BASE_URL } from '$lib/constants';
 
 	const i18n = getContext('i18n');
 
@@ -212,7 +213,7 @@
 		sessionStorage.function = JSON.stringify({
 			...func
 		});
-		goto('/admin/functions/create');
+		goto(WEBUI_BASE_URL + '/admin/functions/create');
 	}}
 />
 

@@ -19,7 +19,6 @@
 	import localizedFormat from 'dayjs/plugin/localizedFormat';
 	import { WEBUI_BASE_URL, WEBUI_HOSTNAME_PATH } from '$lib/constants';
 
-
 	const i18n = getContext('i18n');
 	dayjs.extend(localizedFormat);
 

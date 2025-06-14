@@ -908,7 +908,7 @@
 							: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
 						on:click={async (e) => {
 							e.preventDefault();
-							await goto(WEBUI_BASE_URL +'/admin/settings');
+							await goto(WEBUI_BASE_URL + '/admin/settings');
 							show = false;
 						}}
 					>

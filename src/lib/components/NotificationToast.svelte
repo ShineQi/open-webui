@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { WEBUI_BASE_URL } from '$lib/constants';
-import { settings, playingNotificationSound, isLastActiveTab } from '$lib/stores';
+	import { settings, playingNotificationSound, isLastActiveTab } from '$lib/stores';
 	import DOMPurify from 'dompurify';
 
 	import { marked } from 'marked';
@@ -39,7 +39,7 @@ import { settings, playingNotificationSound, isLastActiveTab } from '$lib/stores
 	}}
 >
 	<div class="flex-shrink-0 self-top -translate-y-0.5">
-		<img src='{WEBUI_BASE_URL}/static/favicon.png' alt="favicon" class="size-7 rounded-full" />
+		<img src="{WEBUI_BASE_URL}/static/favicon.png" alt="favicon" class="size-7 rounded-full" />
 	</div>
 
 	<div>

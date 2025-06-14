@@ -102,7 +102,7 @@
 			{#if role === 'admin'}
 				<a
 					class="flex rounded-md py-1.5 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-					href={WEBUI_BASE_URL + "/playground"}
+					href={WEBUI_BASE_URL + '/playground'}
 					on:click={() => {
 						show = false;
 
@@ -132,7 +132,7 @@
 
 				<a
 					class="flex rounded-md py-1.5 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-					href={WEBUI_BASE_URL + "/admin"}
+					href={WEBUI_BASE_URL + '/admin'}
 					on:click={() => {
 						show = false;
 

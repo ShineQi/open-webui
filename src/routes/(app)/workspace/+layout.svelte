@@ -84,7 +84,7 @@
 								)
 									? ''
 									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-								href={WEBUI_BASE_URL + "/workspace/models"}>{$i18n.t('Models')}</a
+								href={WEBUI_BASE_URL + '/workspace/models'}>{$i18n.t('Models')}</a
 							>
 						{/if}
 
@@ -95,7 +95,7 @@
 								)
 									? ''
 									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-								href={WEBUI_BASE_URL + "/workspace/knowledge"}
+								href={WEBUI_BASE_URL + '/workspace/knowledge'}
 							>
 								{$i18n.t('Knowledge')}
 							</a>
@@ -108,7 +108,7 @@
 								)
 									? ''
 									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-								href={WEBUI_BASE_URL + "/workspace/prompts"}>{$i18n.t('Prompts')}</a
+								href={WEBUI_BASE_URL + '/workspace/prompts'}>{$i18n.t('Prompts')}</a
 							>
 						{/if}
 
@@ -117,7 +117,7 @@
 								class="min-w-fit rounded-full p-1.5 {$page.url.pathname.includes('/workspace/tools')
 									? ''
 									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-								href={WEBUI_BASE_URL + "/workspace/tools"}
+								href={WEBUI_BASE_URL + '/workspace/tools'}
 							>
 								{$i18n.t('Tools')}
 							</a>

@@ -19,7 +19,7 @@
 			)
 		) {
 			// If the feature is not enabled, redirect to the home page
-			goto('/');
+			goto(WEBUI_BASE_URL);
 		}
 
 		loaded = true;

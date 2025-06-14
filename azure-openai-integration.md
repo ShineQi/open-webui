@@ -1,6 +1,6 @@
 ---
 sidebar_position: 450
-title: "☁️ Azure OpenAI Integration"
+title: '☁️ Azure OpenAI Integration'
 ---
 
 # Azure OpenAI Integration
@@ -39,6 +39,7 @@ These models use the `2023-03-15-preview` API version by default and work with s
 ### O-Series Models (like o4-mini)
 
 These models require:
+
 - API version `2024-12-01-preview`
 - Use of `max_completion_tokens` instead of `max_tokens`
 - Temperature value of 1 (other values are not supported)
