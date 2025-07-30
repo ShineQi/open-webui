@@ -19,7 +19,7 @@ if [ -n "${WEBUI_SECRET_KEY_FILE}" ]; then
 else
     KEY_FILE=".webui_secret_key"
 fi
-
+ROOT_PATH="${ROOT_PATH:/openwebui}"
 PORT="${PORT:-8080}"
 HOST="${HOST:-0.0.0.0}"
 if test "$WEBUI_SECRET_KEY $WEBUI_JWT_SECRET_KEY" = " "; then
