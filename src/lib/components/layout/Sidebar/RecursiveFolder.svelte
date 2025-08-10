@@ -38,7 +38,7 @@
 	import DeleteConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
 	import FolderModal from './Folders/FolderModal.svelte';
 	import { goto } from '$app/navigation';
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	export let open = false;
 
 	export let folders;
@@ -434,7 +434,7 @@
 					renameHandler();
 				}}
 				on:click={async (e) => {
-					await goto('/');
+					await goto(WEBUI_BASE_URL+'/');
 
 					selectedFolder.set(folders[folderId]);
 

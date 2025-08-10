@@ -504,7 +504,7 @@
 	id="sidebar-new-chat-button"
 	class="hidden"
 	on:click={() => {
-		goto('/');
+		goto(WEBUI_BASE_URL+'/');
 		newChatHandler();
 	}}
 />
@@ -547,13 +547,13 @@
 					<Tooltip content={$i18n.t('New Chat')} placement="right">
 						<a
 							class=" cursor-pointer flex rounded-lg hover:bg-gray-100 dark:hover:bg-gray-850 transition group"
-							href="/"
+							href={WEBUI_BASE_URL+"/"}
 							draggable="false"
 							on:click={async (e) => {
 								e.stopImmediatePropagation();
 								e.preventDefault();
 
-								goto('/');
+								goto(WEBUI_BASE_URL+'/');
 								newChatHandler();
 							}}
 						>
@@ -588,12 +588,12 @@
 						<Tooltip content={$i18n.t('Notes')} placement="right">
 							<a
 								class=" cursor-pointer flex rounded-lg hover:bg-gray-100 dark:hover:bg-gray-850 transition group"
-								href="/notes"
+								href={WEBUI_BASE_URL+"/notes"}
 								on:click={async (e) => {
 									e.stopImmediatePropagation();
 									e.preventDefault();
 
-									goto('/notes');
+									goto(WEBUI_BASE_URL+'/notes');
 									itemClickHandler();
 								}}
 								draggable="false"
@@ -611,12 +611,12 @@
 						<Tooltip content={$i18n.t('Workspace')} placement="right">
 							<a
 								class=" cursor-pointer flex rounded-lg hover:bg-gray-100 dark:hover:bg-gray-850 transition group"
-								href="/workspace"
+								href={WEBUI_BASE_URL+"/workspace"}
 								on:click={async (e) => {
 									e.stopImmediatePropagation();
 									e.preventDefault();
 
-									goto('/workspace');
+									goto(WEBUI_BASE_URL+'/workspace');
 									itemClickHandler();
 								}}
 								draggable="false"
@@ -699,7 +699,7 @@
 			>
 				<a
 					class="flex items-center rounded-lg p-1.5 h-full justify-center hover:bg-gray-100 dark:hover:bg-gray-850 transition no-drag-region"
-					href="/"
+					href="{WEBUI_BASE_URL}/"
 					draggable="false"
 					on:click={newChatHandler}
 				>
@@ -711,7 +711,7 @@
 					/>
 				</a>
 
-				<a href="/" class="flex flex-1 px-1.5" on:click={newChatHandler}>
+				<a href="{WEBUI_BASE_URL}/" class="flex flex-1 px-1.5" on:click={newChatHandler}>
 					<div class=" self-center font-medium text-gray-850 dark:text-white font-primary">
 						{$WEBUI_NAME}
 					</div>
@@ -738,7 +738,7 @@
 					<a
 						id="sidebar-new-chat-button"
 						class="grow flex items-center space-x-3 rounded-lg px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 transition outline-none"
-						href="/"
+						href="{WEBUI_BASE_URL}/"
 						draggable="false"
 						on:click={newChatHandler}
 					>
@@ -870,7 +870,7 @@
 					onAddLabel={$i18n.t('New Folder')}
 					on:change={async (e) => {
 						selectedFolder.set(null);
-						await goto('/');
+						await goto(WEBUI_BASE_URL+'/');
 					}}
 					on:import={(e) => {
 						importChatHandler(e.detail);

@@ -30,7 +30,7 @@
 	>
 		<a
 			class="grow flex items-center space-x-2.5 rounded-lg px-2 py-[7px] group-hover:bg-gray-100 dark:group-hover:bg-gray-900 transition"
-			href="/?model={model?.id}"
+			href="{WEBUI_BASE_URL}/?model={model?.id}"
 			on:click={onClick}
 			draggable="false"
 		>

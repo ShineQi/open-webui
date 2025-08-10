@@ -113,7 +113,7 @@
 			{#if role === 'admin'}
 				<DropdownMenu.Item
 					as="a"
-					href="/playground"
+					href="{WEBUI_BASE_URL}/playground"
 					class="flex rounded-md py-1.5 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition select-none"
 					on:click={async () => {
 						show = false;
