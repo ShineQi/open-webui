@@ -30,8 +30,7 @@
 
 	let searchDebounceTimeout;
 
-	let selectedIdx = 0;
-
+	let selectedIdx = null;
 	let selectedChat = null;
 
 	let selectedModels = [''];
@@ -43,7 +42,12 @@
 	}
 
 	const loadChatPreview = async (selectedIdx) => {
-		if (!chatList || chatList.length === 0) {
+		if (
+			!chatList ||
+			chatList.length === 0 ||
+			selectedIdx === null ||
+			chatList[selectedIdx] === undefined
+		) {
 			selectedChat = null;
 			messages = null;
 			history = null;
@@ -98,6 +102,12 @@
 		} else {
 			searchDebounceTimeout = setTimeout(async () => {
 				chatList = await getChatListBySearchText(localStorage.token, query, page);
+
+				if ((chatList ?? []).length === 0) {
+					allChatsLoaded = true;
+				} else {
+					allChatsLoaded = false;
+				}
 			}, 500);
 		}
 
@@ -140,6 +150,11 @@
 	};
 
 	const onKeyDown = (e) => {
+		const searchOptions = document.getElementById('search-options-container');
+		if (searchOptions || !show) {
+			return;
+		}
+
 		if (e.code === 'Escape') {
 			show = false;
 			onClose();
@@ -207,6 +222,10 @@
 				on:input={searchHandler}
 				placeholder={$i18n.t('Search')}
 				showClearButton={true}
+				onFocus={() => {
+					selectedIdx = null;
+					messages = null;
+				}}
 				onKeydown={(e) => {
 					console.log('e', e);
 
@@ -336,13 +355,14 @@
 					<div class="w-full h-full flex flex-col">
 						<Messages
 							className="h-full flex pt-4 pb-8 w-full"
+							chatId={`chat-preview-${selectedChat?.id ?? ''}`}
 							user={$user}
 							readOnly={true}
 							{selectedModels}
 							bind:history
 							bind:messages
 							autoScroll={true}
-							sendPrompt={() => {}}
+							sendMessage={() => {}}
 							continueResponse={() => {}}
 							regenerateResponse={() => {}}
 						/>
