@@ -7,6 +7,7 @@
 	import { getTimeRange } from '$lib/utils';
 	import ChevronUp from '$lib/components/icons/ChevronUp.svelte';
 	import ChevronDown from '$lib/components/icons/ChevronDown.svelte';
+	import { WEBUI_BASE_URL } from '$lib/constants';
 
 	dayjs.extend(localizedFormat);
 
@@ -143,7 +144,7 @@
 			<a
 				class=" w-full flex justify-between items-center rounded-lg text-sm py-2 px-3 hover:bg-gray-50 dark:hover:bg-gray-850"
 				draggable="false"
-				href={`/c/${chat.id}`}
+				href={`${WEBUI_BASE_URL}/c/${chat.id}`}
 				on:click={() => (show = false)}
 			>
 				<div class="text-ellipsis line-clamp-1 w-full sm:basis-3/5">
