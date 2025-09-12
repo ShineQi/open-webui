@@ -19,7 +19,6 @@ from fastapi.responses import (
 from pydantic import BaseModel
 from starlette.background import BackgroundTask
 
-from open_webui.utils.azure import is_azure_openai_url
 from open_webui.models.models import Models
 from open_webui.config import (
     CACHE_DIR,
@@ -31,7 +30,6 @@ from open_webui.env import (
     AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST,
     ENABLE_FORWARD_USER_INFO_HEADERS,
     BYPASS_MODEL_ACCESS_CONTROL,
-    AZURE_OPENAI_API_VERSION,
 )
 from open_webui.models.users import UserModel
 
@@ -66,11 +64,10 @@ async def send_get_request(url, key=None, user: UserModel = None):
     timeout = aiohttp.ClientTimeout(total=AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST)
     try:
         async with aiohttp.ClientSession(timeout=timeout, trust_env=True) as session:
-            # Check if this is an Azure OpenAI URL
-            if is_azure_openai_url(url):
-                # For Azure OpenAI, we need to use the api-key header instead of Authorization
-                headers = {
-                    **({"api-key": key} if key else {}),
+            async with session.get(
+                url,
+                headers={
+                    **({"Authorization": f"Bearer {key}"} if key else {}),
                     **(
                         {
                             "X-OpenWebUI-User-Name": quote(user.name, safe=" "),
@@ -81,35 +78,10 @@ async def send_get_request(url, key=None, user: UserModel = None):
                         if ENABLE_FORWARD_USER_INFO_HEADERS and user
                         else {}
                     ),
-                }
-                # For Azure OpenAI, we need to use the deployments endpoint instead of models
-                azure_url = f"{url}/openai/deployments?api-version=2023-03-15-preview"
-                async with session.get(
-                    azure_url,
-                    headers=headers,
-                    ssl=AIOHTTP_CLIENT_SESSION_SSL,
-                ) as response:
-                    return await response.json()
-            else:
-                # Standard OpenAI API
-                async with session.get(
-                    url,
-                    headers={
-                        **({"Authorization": f"Bearer {key}"} if key else {}),
-                        **(
-                            {
-                                "X-OpenWebUI-User-Name": user.name,
-                                "X-OpenWebUI-User-Id": user.id,
-                                "X-OpenWebUI-User-Email": user.email,
-                                "X-OpenWebUI-User-Role": user.role,
-                            }
-                            if ENABLE_FORWARD_USER_INFO_HEADERS and user
-                            else {}
-                        ),
-                    },
-                    ssl=AIOHTTP_CLIENT_SESSION_SSL,
-                ) as response:
-                    return await response.json()
+                },
+                ssl=AIOHTTP_CLIENT_SESSION_SSL,
+            ) as response:
+                return await response.json()
     except Exception as e:
         # Handle connection error here
         log.error(f"Connection error: {e}")
@@ -383,23 +355,13 @@ async def get_all_models_responses(request: Request, user: UserModel) -> list:
         if (str(idx) not in request.app.state.config.OPENAI_API_CONFIGS) and (
             url not in request.app.state.config.OPENAI_API_CONFIGS  # Legacy support
         ):
-            # For Azure OpenAI, we need to use a different endpoint format
-            if is_azure_openai_url(url):
-                request_tasks.append(
-                    send_get_request(
-                        url,
-                        request.app.state.config.OPENAI_API_KEYS[idx],
-                        user=user,
-                    )
+            request_tasks.append(
+                send_get_request(
+                    f"{url}/models",
+                    request.app.state.config.OPENAI_API_KEYS[idx],
+                    user=user,
                 )
-            else:
-                request_tasks.append(
-                    send_get_request(
-                        f"{url}/models",
-                        request.app.state.config.OPENAI_API_KEYS[idx],
-                        user=user,
-                    )
-                )
+            )
         else:
             api_config = request.app.state.config.OPENAI_API_CONFIGS.get(
                 str(idx),
@@ -413,23 +375,13 @@ async def get_all_models_responses(request: Request, user: UserModel) -> list:
 
             if enable:
                 if len(model_ids) == 0:
-                    # For Azure OpenAI, we need to use a different endpoint format
-                    if is_azure_openai_url(url):
-                        request_tasks.append(
-                            send_get_request(
-                                url,
-                                request.app.state.config.OPENAI_API_KEYS[idx],
-                                user=user,
-                            )
+                    request_tasks.append(
+                        send_get_request(
+                            f"{url}/models",
+                            request.app.state.config.OPENAI_API_KEYS[idx],
+                            user=user,
                         )
-                    else:
-                        request_tasks.append(
-                            send_get_request(
-                                f"{url}/models",
-                                request.app.state.config.OPENAI_API_KEYS[idx],
-                                user=user,
-                            )
-                        )
+                    )
                 else:
                     model_list = {
                         "object": "list",
