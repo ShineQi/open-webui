@@ -5,6 +5,7 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
+	base: '/openwebui/',
 	plugins: [
 		sveltekit(),
 		createHtmlPlugin(),
@@ -12,7 +13,6 @@ export default defineConfig({
 			targets: [
 				{
 					src: 'node_modules/onnxruntime-web/dist/*.jsep.*',
-
 					dest: 'wasm'
 				}
 			]
