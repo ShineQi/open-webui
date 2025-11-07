@@ -5,6 +5,7 @@ on:
     branches: [ "subfolder" ]
   pull_request:
     branches: [ "subfolder" ]
+  workflow_dispatch:      # 支持手动触发
 env:
   # 镜像名称格式：Docker Hub用户名/仓库名（自动获取仓库名）
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
