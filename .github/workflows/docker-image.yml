@@ -54,7 +54,7 @@ jobs:
           cache-from: type=registry,ref=${{ steps.cache-meta.outputs.tags }}
           cache-to: type=registry,ref=${{ steps.cache-meta.outputs.tags }},mode=max
           build-args: |
-            BUILD_HASH=${{ github.sha }
+            BUILD_HASH=${{ github.sha }}
 
       - name: Update Docker Hub description
         uses: peter-evans/dockerhub-description@v4  # 自动同步仓库描述到Docker Hub
