@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # 拉取代码
+        uses: actions/checkout@v5  # 拉取代码
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3  # 支持多架构构建
@@ -46,11 +46,15 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile  # 指向项目Dockerfile（根据实际路径调整）
           push: true
-          platforms: linux/amd64,linux/arm64  # 构建多架构镜像<cite data-id='20020'>20020</cite>
+          platforms: linux/amd64  # 构建多架构镜像<cite data-id='20020'>20020</cite>
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.FULL_IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=registry,ref=${{ steps.cache-meta.outputs.tags }}
+          cache-to: type=registry,ref=${{ steps.cache-meta.outputs.tags }},mode=max
+          build-args: |
+            BUILD_HASH=${{ github.sha }
 
       - name: Update Docker Hub description
         uses: peter-evans/dockerhub-description@v4  # 自动同步仓库描述到Docker Hub
