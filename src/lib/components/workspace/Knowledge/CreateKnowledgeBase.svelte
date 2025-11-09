@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { getContext } from 'svelte';
 	const i18n = getContext('i18n');
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	import { createNewKnowledge, getKnowledgeBases } from '$lib/apis/knowledge';
 	import { toast } from 'svelte-sonner';
 	import { knowledge, user } from '$lib/stores';
@@ -38,7 +38,7 @@
 		if (res) {
 			toast.success($i18n.t('Knowledge created successfully.'));
 			knowledge.set(await getKnowledgeBases(localStorage.token));
-			goto(`/workspace/knowledge/${res.id}`);
+			goto(`${WEBUI_BASE_URL}/workspace/knowledge/${res.id}`);
 		}
 
 		loading = false;
@@ -49,7 +49,7 @@
 	<button
 		class="flex space-x-1"
 		on:click={() => {
-			goto('/workspace/knowledge');
+			goto(WEBUI_BASE_URL + '/workspace/knowledge');
 		}}
 	>
 		<div class=" self-center">
@@ -112,7 +112,7 @@
 		</div>
 
 		<div class="mt-2">
-			<div class="px-3 py-2 bg-gray-50 dark:bg-gray-950 rounded-lg">
+			<div class="px-4 py-3 bg-gray-50 dark:bg-gray-950 rounded-3xl">
 				<AccessControl
 					bind:accessControl
 					accessRoles={['read', 'write']}

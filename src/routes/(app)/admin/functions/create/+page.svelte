@@ -8,7 +8,7 @@
 	import FunctionEditor from '$lib/components/admin/Functions/FunctionEditor.svelte';
 	import { getModels } from '$lib/apis';
 	import { compareVersion, extractFrontmatter } from '$lib/utils';
-	import { WEBUI_VERSION } from '$lib/constants';
+	import { WEBUI_BASE_URL, WEBUI_VERSION } from '$lib/constants';
 
 	const i18n = getContext('i18n');
 
@@ -56,7 +56,7 @@
 				)
 			);
 
-			await goto('/admin/functions');
+			await goto(WEBUI_BASE_URL + '/admin/functions');
 		}
 	};
 
@@ -91,15 +91,17 @@
 
 {#if mounted}
 	{#key func?.content}
-		<FunctionEditor
-			id={func?.id ?? ''}
-			name={func?.name ?? ''}
-			meta={func?.meta ?? { description: '' }}
-			content={func?.content ?? ''}
-			{clone}
-			onSave={(value) => {
-				saveHandler(value);
-			}}
-		/>
+		<div class="px-[16px] h-full">
+			<FunctionEditor
+				id={func?.id ?? ''}
+				name={func?.name ?? ''}
+				meta={func?.meta ?? { description: '' }}
+				content={func?.content ?? ''}
+				{clone}
+				onSave={(value) => {
+					saveHandler(value);
+				}}
+			/>
+		</div>
 	{/key}
 {/if}

@@ -4,6 +4,7 @@
 
 	import { WEBUI_NAME, mobile, showSidebar, user } from '$lib/stores';
 	import { page } from '$app/stores';
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 
 	import Sidebar from '$lib/components/icons/Sidebar.svelte';
@@ -14,7 +15,7 @@
 
 	onMount(async () => {
 		if ($user?.role !== 'admin') {
-			await goto('/');
+			await goto(WEBUI_BASE_URL + '/');
 		}
 		loaded = true;
 	});
@@ -63,7 +64,7 @@
 							class="min-w-fit p-1.5 {$page.url.pathname.includes('/admin/users')
 								? ''
 								: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-							href="/admin">{$i18n.t('Users')}</a
+							href={WEBUI_BASE_URL + '/admin'}>{$i18n.t('Users')}</a
 						>
 
 						<!-- <a
@@ -77,28 +78,28 @@
 							class="min-w-fit p-1.5 {$page.url.pathname.includes('/admin/evaluations')
 								? ''
 								: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-							href="/admin/evaluations">{$i18n.t('Evaluations')}</a
+							href={WEBUI_BASE_URL + '/admin/evaluations'}>{$i18n.t('Evaluations')}</a
 						>
 
 						<a
 							class="min-w-fit p-1.5 {$page.url.pathname.includes('/admin/functions')
 								? ''
 								: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-							href="/admin/functions">{$i18n.t('Functions')}</a
+							href={WEBUI_BASE_URL + '/admin/functions'}>{$i18n.t('Functions')}</a
 						>
 
 						<a
 							class="min-w-fit p-1.5 {$page.url.pathname.includes('/admin/settings')
 								? ''
 								: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-							href="/admin/settings">{$i18n.t('Settings')}</a
+							href={WEBUI_BASE_URL + '/admin/settings'}>{$i18n.t('Settings')}</a
 						>
 					</div>
 				</div>
 			</div>
 		</nav>
 
-		<div class=" pb-1 px-[16px] flex-1 max-h-full overflow-y-auto">
+		<div class="  pb-1 flex-1 max-h-full overflow-y-auto">
 			<slot />
 		</div>
 	</div>

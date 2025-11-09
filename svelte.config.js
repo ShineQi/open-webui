@@ -36,8 +36,13 @@ const config = {
 				}
 			})(),
 			pollInterval: 60000
+		},
+		paths: {
+			base: '/openwebui',
+			relative: true
 		}
 	},
+
 	vitePlugin: {
 		// inspector: {
 		// 	toggleKeyCombo: 'meta-shift', // Key combination to open the inspector

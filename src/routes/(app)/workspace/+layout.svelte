@@ -15,6 +15,7 @@
 	import { goto } from '$app/navigation';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import Sidebar from '$lib/components/icons/Sidebar.svelte';
+	import { WEBUI_BASE_URL } from '$lib/constants';
 
 	const i18n = getContext('i18n');
 
@@ -23,19 +24,19 @@
 	onMount(async () => {
 		if ($user?.role !== 'admin') {
 			if ($page.url.pathname.includes('/models') && !$user?.permissions?.workspace?.models) {
-				goto('/');
+				goto(WEBUI_BASE_URL + '/');
 			} else if (
 				$page.url.pathname.includes('/knowledge') &&
 				!$user?.permissions?.workspace?.knowledge
 			) {
-				goto('/');
+				goto(WEBUI_BASE_URL + '/');
 			} else if (
 				$page.url.pathname.includes('/prompts') &&
 				!$user?.permissions?.workspace?.prompts
 			) {
-				goto('/');
+				goto(WEBUI_BASE_URL + '/');
 			} else if ($page.url.pathname.includes('/tools') && !$user?.permissions?.workspace?.tools) {
-				goto('/');
+				goto(WEBUI_BASE_URL + '/');
 			}
 		}
 
@@ -87,7 +88,7 @@
 								class="min-w-fit p-1.5 {$page.url.pathname.includes('/workspace/models')
 									? ''
 									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-								href="/workspace/models">{$i18n.t('Models')}</a
+								href={WEBUI_BASE_URL + '/workspace/models'}>{$i18n.t('Models')}</a
 							>
 						{/if}
 
@@ -96,7 +97,7 @@
 								class="min-w-fit p-1.5 {$page.url.pathname.includes('/workspace/knowledge')
 									? ''
 									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-								href="/workspace/knowledge"
+								href={WEBUI_BASE_URL + '/workspace/knowledge'}
 							>
 								{$i18n.t('Knowledge')}
 							</a>
@@ -107,7 +108,7 @@
 								class="min-w-fit p-1.5 {$page.url.pathname.includes('/workspace/prompts')
 									? ''
 									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-								href="/workspace/prompts">{$i18n.t('Prompts')}</a
+								href={WEBUI_BASE_URL + '/workspace/prompts'}>{$i18n.t('Prompts')}</a
 							>
 						{/if}
 
@@ -116,7 +117,7 @@
 								class="min-w-fit p-1.5 {$page.url.pathname.includes('/workspace/tools')
 									? ''
 									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-								href="/workspace/tools"
+								href={WEBUI_BASE_URL + '/workspace/tools'}
 							>
 								{$i18n.t('Tools')}
 							</a>
@@ -128,7 +129,10 @@
 			</div>
 		</nav>
 
-		<div class="  pb-1 px-[18px] flex-1 max-h-full overflow-y-auto" id="workspace-container">
+		<div
+			class="  pb-1 px-3 md:px-[18px] flex-1 max-h-full overflow-y-auto"
+			id="workspace-container"
+		>
 			<slot />
 		</div>
 	</div>

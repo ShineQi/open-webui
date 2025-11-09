@@ -4,13 +4,8 @@
 	import { goto } from '$app/navigation';
 	import { onMount, tick, getContext } from 'svelte';
 
-	import {
-		OLLAMA_API_BASE_URL,
-		OPENAI_API_BASE_URL,
-		WEBUI_API_BASE_URL,
-		WEBUI_BASE_URL
-	} from '$lib/constants';
-	import { WEBUI_NAME, config, user, models, settings } from '$lib/stores';
+	import { WEBUI_BASE_URL } from '$lib/constants';
+	import { config, user, models, settings } from '$lib/stores';
 
 	import { chatCompletion } from '$lib/apis/openai';
 
@@ -195,7 +190,7 @@
 
 	onMount(async () => {
 		if ($user?.role !== 'admin') {
-			await goto('/');
+			await goto(WEBUI_BASE_URL + '/');
 		}
 
 		if ($settings?.models) {
@@ -224,7 +219,7 @@
 							{$i18n.t('System Instructions')}
 						</div>
 
-						{#if !showSystem}
+						{#if !showSystem && system.trim()}
 							<div class=" flex-1 text-gray-500 line-clamp-1">
 								{system}
 							</div>
@@ -296,7 +291,7 @@
 					<div
 						class="flex justify-between flex-col sm:flex-row items-start sm:items-center gap-2 mt-2"
 					>
-						<div class="flex-1 shrink-0">
+						<div class="shrink-0">
 							<button
 								type="button"
 								class="px-3.5 py-1.5 text-sm font-medium bg-gray-50 hover:bg-gray-100 text-gray-900 dark:bg-gray-850 dark:hover:bg-gray-800 dark:text-gray-200 transition rounded-lg shrink-0 {($settings?.highContrastMode ??

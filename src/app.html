@@ -23,28 +23,14 @@
 			href="/static/apple-touch-icon.png"
 			crossorigin="use-credentials"
 		/>
-		<meta name="apple-mobile-web-app-title" content="Open WebUI" />
-
-		<link
-			rel="manifest"
-			href="/manifest.json"
-			crossorigin="use-credentials"
-			crossorigin="use-credentials"
-		/>
+		<link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
 		<meta
 			name="viewport"
 			content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
 		/>
 		<meta name="theme-color" content="#171717" />
 		<meta name="robots" content="noindex,nofollow" />
-		<meta name="description" content="Open WebUI" />
-		<link
-			rel="search"
-			type="application/opensearchdescription+xml"
-			title="Open WebUI"
-			href="/opensearch.xml"
-			crossorigin="use-credentials"
-		/>
+
 		<script src="/static/loader.js" defer crossorigin="use-credentials"></script>
 		<link rel="stylesheet" href="/static/custom.css" crossorigin="use-credentials" />
 
@@ -104,7 +90,7 @@
 				logo.id = 'logo';
 				logo.style =
 					'position: absolute; width: auto; height: 6rem; top: 44%; left: 50%; transform: translateX(-50%); display:block;';
-				logo.src = isDarkMode ? '/static/splash-dark.png' : '/static/splash.png';
+				logo.src = isDarkMode ? 'static/splash-dark.png' : 'static/splash.png';
 
 				document.addEventListener('DOMContentLoaded', function () {
 					const splash = document.getElementById('splash-screen');
@@ -135,6 +121,19 @@
 				}
 			</style>
 
+			<img
+				id="logo"
+				style="
+					position: absolute;
+					width: auto;
+					height: 6rem;
+					top: 44%;
+					left: 50%;
+					transform: translateX(-50%);
+				"
+				src="static/splash.png"
+			/>
+
 			<div
 				style="
 					position: absolute;
@@ -152,7 +151,7 @@
 				<img
 					id="logo-her"
 					style="width: auto; height: 13rem"
-					src="/static/splash.png"
+					src="static/splash.png"
 					class="animate-pulse-fast"
 				/>
 

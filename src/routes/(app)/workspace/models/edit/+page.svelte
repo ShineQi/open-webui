@@ -1,7 +1,7 @@
 <script>
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	import { onMount, getContext } from 'svelte';
 	const i18n = getContext('i18n');
 
@@ -23,10 +23,10 @@
 			});
 
 			if (!model) {
-				goto('/workspace/models');
+				goto(WEBUI_BASE_URL + '/workspace/models');
 			}
 		} else {
-			goto('/workspace/models');
+			goto(WEBUI_BASE_URL + '/workspace/models');
 		}
 	});
 
@@ -41,7 +41,7 @@
 				)
 			);
 			toast.success($i18n.t('Model updated successfully'));
-			await goto('/workspace/models');
+			await goto(WEBUI_BASE_URL + '/workspace/models');
 		}
 	};
 </script>

@@ -18,7 +18,12 @@ from open_webui.utils.redis import (
     get_sentinel_url_from_env,
 )
 
+from open_webui.config import (
+    CORS_ALLOW_ORIGIN,
+)
+
 from open_webui.env import (
+    VERSION,
     ENABLE_WEBSOCKET_SUPPORT,
     WEBSOCKET_MANAGER,
     WEBSOCKET_REDIS_URL,
@@ -26,6 +31,7 @@ from open_webui.env import (
     WEBSOCKET_REDIS_LOCK_TIMEOUT,
     WEBSOCKET_SENTINEL_PORT,
     WEBSOCKET_SENTINEL_HOSTS,
+    ROOT_PATH,
     REDIS_KEY_PREFIX,
 )
 from open_webui.utils.auth import decode_token
@@ -48,6 +54,9 @@ log.setLevel(SRC_LOG_LEVELS["SOCKET"])
 
 REDIS = None
 
+# Configure CORS for Socket.IO
+SOCKETIO_CORS_ORIGINS = "*" if CORS_ALLOW_ORIGIN == ["*"] else CORS_ALLOW_ORIGIN
+
 if WEBSOCKET_MANAGER == "redis":
     if WEBSOCKET_SENTINEL_HOSTS:
         mgr = socketio.AsyncRedisManager(
@@ -58,7 +67,7 @@ if WEBSOCKET_MANAGER == "redis":
     else:
         mgr = socketio.AsyncRedisManager(WEBSOCKET_REDIS_URL)
     sio = socketio.AsyncServer(
-        cors_allowed_origins=[],
+        cors_allowed_origins=SOCKETIO_CORS_ORIGINS,
         async_mode="asgi",
         transports=(["websocket"] if ENABLE_WEBSOCKET_SUPPORT else ["polling"]),
         allow_upgrades=ENABLE_WEBSOCKET_SUPPORT,
@@ -67,7 +76,7 @@ if WEBSOCKET_MANAGER == "redis":
     )
 else:
     sio = socketio.AsyncServer(
-        cors_allowed_origins=[],
+        cors_allowed_origins=SOCKETIO_CORS_ORIGINS,
         async_mode="asgi",
         transports=(["websocket"] if ENABLE_WEBSOCKET_SUPPORT else ["polling"]),
         allow_upgrades=ENABLE_WEBSOCKET_SUPPORT,
@@ -191,7 +200,7 @@ async def periodic_usage_pool_cleanup():
 
 app = socketio.ASGIApp(
     sio,
-    socketio_path="/ws/socket.io",
+    socketio_path = f"{ROOT_PATH}/ws/socket.io" if ROOT_PATH != "/" else "/ws/socket.io",
 )
 
 
@@ -274,6 +283,7 @@ async def connect(sid, environ, auth):
             else:
                 USER_POOL[user.id] = [sid]
 
+            await sio.enter_room(sid, f"user:{user.id}")
 
 @sio.on("user-join")
 async def user_join(sid, data):
@@ -296,6 +306,7 @@ async def user_join(sid, data):
     else:
         USER_POOL[user.id] = [sid]
 
+    await sio.enter_room(sid, f"user:{user.id}")
     # Join all the channels
     channels = Channels.get_channels_by_user_id(user.id)
     log.debug(f"{channels=}")
@@ -356,7 +367,7 @@ async def join_note(sid, data):
     await sio.enter_room(sid, f"note:{note.id}")
 
 
-@sio.on("channel-events")
+@sio.on("events:channel")
 async def channel_events(sid, data):
     room = f"channel:{data['channel_id']}"
     participants = sio.manager.get_participants(
@@ -373,7 +384,7 @@ async def channel_events(sid, data):
 
     if event_type == "typing":
         await sio.emit(
-            "channel-events",
+            "events:channel",
             {
                 "channel_id": data["channel_id"],
                 "message_id": data.get("message_id", None),
@@ -642,33 +653,23 @@ def get_event_emitter(request_info, update_db=True):
     async def __event_emitter__(event_data):
         user_id = request_info["user_id"]
 
-        session_ids = list(
-            set(
-                USER_POOL.get(user_id, [])
-                + (
-                    [request_info.get("session_id")]
-                    if request_info.get("session_id")
-                    else []
-                )
-            )
+        chat_id = request_info.get("chat_id", None)
+        message_id = request_info.get("message_id", None)
+
+        await sio.emit(
+            "events",
+            {
+                "chat_id": chat_id,
+                "message_id": message_id,
+                "data": event_data,
+            },
+            room=f"user:{user_id}",
         )
-
-        emit_tasks = [
-            sio.emit(
-                "chat-events",
-                {
-                    "chat_id": request_info.get("chat_id", None),
-                    "message_id": request_info.get("message_id", None),
-                    "data": event_data,
-                },
-                to=session_id,
-            )
-            for session_id in session_ids
-        ]
-
-        await asyncio.gather(*emit_tasks)
-
-        if update_db:
+        if (
+            update_db
+            and message_id
+            and not request_info.get("chat_id", "").startswith("local:")
+        ):
             if "type" in event_data and event_data["type"] == "status":
                 Chats.add_message_status_to_chat_by_id_and_message_id(
                     request_info["chat_id"],
@@ -702,6 +703,23 @@ def get_event_emitter(request_info, update_db=True):
                     request_info["message_id"],
                     {
                         "content": content,
+                    },
+                )
+
+            if "type" in event_data and event_data["type"] == "embeds":
+                message = Chats.get_message_by_id_and_message_id(
+                    request_info["chat_id"],
+                    request_info["message_id"],
+                )
+
+                embeds = event_data.get("data", {}).get("embeds", [])
+                embeds.extend(message.get("embeds", []))
+
+                Chats.upsert_message_to_chat_by_id_and_message_id(
+                    request_info["chat_id"],
+                    request_info["message_id"],
+                    {
+                        "embeds": embeds,
                     },
                 )
 
@@ -747,7 +765,7 @@ def get_event_emitter(request_info, update_db=True):
 def get_event_call(request_info):
     async def __event_caller__(event_data):
         response = await sio.call(
-            "chat-events",
+            "events",
             {
                 "chat_id": request_info.get("chat_id", None),
                 "message_id": request_info.get("message_id", None),

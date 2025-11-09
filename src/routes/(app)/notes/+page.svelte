@@ -8,6 +8,7 @@
 	import Notes from '$lib/components/notes/Notes.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import Sidebar from '$lib/components/icons/Sidebar.svelte';
+	import { WEBUI_BASE_URL } from '$lib/constants';
 </script>
 
 <div
@@ -43,7 +44,7 @@
 					<div
 						class="flex gap-1 scrollbar-none overflow-x-auto w-fit text-center text-sm font-medium bg-transparent py-1 touch-auto pointer-events-auto"
 					>
-						<a class="min-w-fit transition" href="/notes">
+						<a class="min-w-fit transition" href="{WEBUI_BASE_URL}/notes">
 							{$i18n.t('Notes')}
 						</a>
 					</div>

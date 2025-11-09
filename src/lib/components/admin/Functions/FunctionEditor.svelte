@@ -1,7 +1,7 @@
 <script>
 	import { getContext, onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	const i18n = getContext('i18n');
 
 	import CodeEditor from '$lib/components/common/CodeEditor.svelte';
@@ -306,7 +306,7 @@ class Pipe:
 								<button
 									class="w-full text-left text-sm py-1.5 px-1 rounded-lg dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-gray-850"
 									on:click={() => {
-										goto('/admin/functions');
+										goto(WEBUI_BASE_URL + '/admin/functions');
 									}}
 									type="button"
 								>

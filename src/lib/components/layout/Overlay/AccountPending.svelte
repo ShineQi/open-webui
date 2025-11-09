@@ -1,6 +1,10 @@
 <script lang="ts">
+	import DOMPurify from 'dompurify';
+	import { marked } from 'marked';
+
 	import { getAdminDetails } from '$lib/apis/auths';
 	import { onMount, tick, getContext } from 'svelte';
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	import { config } from '$lib/stores';
 
 	const i18n = getContext('i18n');
@@ -38,7 +42,11 @@
 					style="white-space: pre-wrap;"
 				>
 					{#if ($config?.ui?.pending_user_overlay_content ?? '').trim() !== ''}
-						{$config.ui.pending_user_overlay_content}
+						{@html marked.parse(
+							DOMPurify.sanitize(
+								($config?.ui?.pending_user_overlay_content ?? '').replace(/\n/g, '<br>')
+							)
+						)}
 					{:else}
 						{$i18n.t('Your account status is currently pending activation.')}{'\n'}{$i18n.t(
 							'To access the WebUI, please reach out to the administrator. Admins can manage user statuses from the Admin Panel.'
@@ -56,7 +64,7 @@
 					<button
 						class="relative z-20 flex px-5 py-2 rounded-full bg-white border border-gray-100 dark:border-none hover:bg-gray-100 text-gray-700 transition font-medium text-sm"
 						on:click={async () => {
-							location.href = '/';
+							location.href = WEBUI_BASE_URL + '/';
 						}}
 					>
 						{$i18n.t('Check Again')}
@@ -66,7 +74,7 @@
 						class="text-xs text-center w-full mt-2 text-gray-400 underline"
 						on:click={async () => {
 							localStorage.removeItem('token');
-							location.href = '/auth';
+							location.href = WEBUI_BASE_URL + '/auth';
 						}}>{$i18n.t('Sign Out')}</button
 					>
 				</div>

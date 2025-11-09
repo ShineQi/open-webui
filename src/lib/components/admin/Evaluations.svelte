@@ -8,6 +8,8 @@
 
 	import { getAllFeedbacks } from '$lib/apis/evaluations';
 
+	import { WEBUI_BASE_URL } from '$lib/constants';
+
 	const i18n = getContext('i18n');
 
 	let selectedTab;
@@ -56,7 +58,7 @@
 	<div class="flex flex-col lg:flex-row w-full h-full pb-2 lg:space-x-4">
 		<div
 			id="users-tabs-container"
-			class="tabs flex flex-row overflow-x-auto gap-2.5 max-w-full lg:gap-1 lg:flex-col lg:flex-none lg:w-40 dark:text-gray-200 text-sm font-medium text-left scrollbar-none"
+			class="tabs mx-[16px] lg:mx-0 lg:px-[16px] flex flex-row overflow-x-auto gap-2.5 max-w-full lg:gap-1 lg:flex-col lg:flex-none lg:w-50 dark:text-gray-200 text-sm font-medium text-left scrollbar-none"
 		>
 			<button
 				id="leaderboard"
@@ -65,7 +67,7 @@
 					? ''
 					: ' text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
 				on:click={() => {
-					goto('/admin/evaluations/leaderboard');
+					goto(WEBUI_BASE_URL + '/admin/evaluations/leaderboard');
 				}}
 			>
 				<div class=" self-center mr-2">
@@ -92,7 +94,7 @@
 					? ''
 					: ' text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
 				on:click={() => {
-					goto('/admin/evaluations/feedbacks');
+					goto(WEBUI_BASE_URL + '/admin/evaluations/feedbacks');
 				}}
 			>
 				<div class=" self-center mr-2">
@@ -113,7 +115,7 @@
 			</button>
 		</div>
 
-		<div class="flex-1 mt-1 lg:mt-0 overflow-y-scroll">
+		<div class="flex-1 mt-1 lg:mt-0 px-[16px] lg:pr-[16px] lg:pl-0 overflow-y-scroll">
 			{#if selectedTab === 'leaderboard'}
 				<Leaderboard {feedbacks} />
 			{:else if selectedTab === 'feedbacks'}

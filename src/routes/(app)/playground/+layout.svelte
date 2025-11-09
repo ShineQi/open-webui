@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import Sidebar from '$lib/components/icons/Sidebar.svelte';
+	import { WEBUI_BASE_URL } from '$lib/constants';
 
 	const i18n = getContext('i18n');
 
@@ -52,7 +53,7 @@
 						class="min-w-fit p-1.5 {['/playground', '/playground/'].includes($page.url.pathname)
 							? ''
 							: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-						href="/playground">{$i18n.t('Chat')}</a
+						href={WEBUI_BASE_URL + '/playground'}>{$i18n.t('Chat')}</a
 					>
 
 					<!-- <a
@@ -66,7 +67,7 @@
 						class="min-w-fit p-1.5 {$page.url.pathname.includes('/playground/completions')
 							? ''
 							: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
-						href="/playground/completions">{$i18n.t('Completions')}</a
+						href={WEBUI_BASE_URL + '/playground/completions'}>{$i18n.t('Completions')}</a
 					>
 				</div>
 			</div>

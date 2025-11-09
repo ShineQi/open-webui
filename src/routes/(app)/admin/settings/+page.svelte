@@ -2,9 +2,9 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import Settings from '$lib/components/admin/Settings.svelte';
-
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	onMount(() => {
-		goto('/admin/settings/general');
+		goto(WEBUI_BASE_URL + '/admin/settings/general');
 	});
 </script>
 

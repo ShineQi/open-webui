@@ -3,15 +3,15 @@
 
 	const i18n = getContext('i18n');
 
-	import CodeEditor from '$lib/components/common/CodeEditor.svelte';
 	import { goto } from '$app/navigation';
+	import { user } from '$lib/stores';
+	import { WEBUI_BASE_URL } from '$lib/constants';
+	import CodeEditor from '$lib/components/common/CodeEditor.svelte';
 	import ConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
-	import Badge from '$lib/components/common/Badge.svelte';
 	import ChevronLeft from '$lib/components/icons/ChevronLeft.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import LockClosed from '$lib/components/icons/LockClosed.svelte';
 	import AccessControlModal from '../common/AccessControlModal.svelte';
-	import { user } from '$lib/stores';
 
 	let formElement = null;
 	let loading = false;
@@ -213,7 +213,7 @@ class Tools:
 								<button
 									class="w-full text-left text-sm py-1.5 px-1 rounded-lg dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-gray-850"
 									on:click={() => {
-										goto('/workspace/tools');
+										goto(WEBUI_BASE_URL + '/workspace/tools');
 									}}
 									type="button"
 								>

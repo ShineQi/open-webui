@@ -12,6 +12,7 @@
 	import { toast } from 'svelte-sonner';
 	import AccessControl from '$lib/components/workspace/common/AccessControl.svelte';
 	import ConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
+	import { WEBUI_API_BASE_URL } from '$lib/constants';
 	import XMark from '$lib/components/icons/XMark.svelte';
 	import { WEBUI_BASE_URL } from '$lib/constants';
 
@@ -293,7 +294,7 @@
 						<hr class=" border-gray-100 dark:border-gray-700/10 my-2.5 w-full" />
 
 						<div class="my-2 -mx-2">
-							<div class="px-3 py-2 bg-gray-50 dark:bg-gray-950 rounded-lg">
+							<div class="px-4 py-3 bg-gray-50 dark:bg-gray-950 rounded-3xl">
 								<AccessControl bind:accessControl />
 							</div>
 						</div>
