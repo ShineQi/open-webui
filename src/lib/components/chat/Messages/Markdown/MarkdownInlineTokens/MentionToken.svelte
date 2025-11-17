@@ -8,6 +8,7 @@
 	import { channels, models } from '$lib/stores';
 	import UserStatus from '$lib/components/channel/Messages/Message/UserStatus.svelte';
 	import UserStatusLinkPreview from '$lib/components/channel/Messages/Message/UserStatusLinkPreview.svelte';
+	import { WEBUI_BASE_URL } from '$lib/constants';
 
 	const i18n = getContext('i18n');
 
@@ -81,13 +82,13 @@
 						console.log('Clicked user mention', id);
 					} else if (idType === 'M') {
 						console.log('Clicked model mention', id);
-						await goto(`/?model=${id}`);
+						await goto(`${WEBUI_BASE_URL}/?model=${id}`);
 					}
 				} else if (triggerChar === '#') {
 					if (idType === 'C') {
 						// Open channel
 						if ($channels.find((c) => c.id === id)) {
-							await goto(`/channels/${id}`);
+							await goto(`${WEBUI_BASE_URL}/channels/${id}`);
 						}
 					} else if (idType === 'T') {
 						// Open thread

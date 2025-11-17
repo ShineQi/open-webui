@@ -2464,7 +2464,7 @@
 									chatId.set(savedChat.id);
 									chats.set(await getChatList(localStorage.token, $currentChatPage));
 
-									await goto(`/c/${savedChat.id}`);
+									await goto(`${WEBUI_BASE_URL}/c/${savedChat.id}`);
 									toast.success($i18n.t('Conversation saved successfully'));
 								}
 							} catch (error) {

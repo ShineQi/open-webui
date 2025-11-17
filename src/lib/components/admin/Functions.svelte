@@ -325,7 +325,7 @@
 						{/if}
 						<AddFunctionMenu
 							createHandler={() => {
-								goto('/admin/functions/create');
+								goto(WEBUI_BASE_URL + '/admin/functions/create');
 							}}
 							importFromLinkHandler={() => {
 								showImportModal = true;

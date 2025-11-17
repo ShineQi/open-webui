@@ -38,8 +38,7 @@ const config = {
 			pollInterval: 60000
 		},
 		paths: {
-			base: '/openwebui',
-			relative: true
+			base: '/openwebui'
 		}
 	},
 

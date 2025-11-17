@@ -132,7 +132,7 @@
 											await temporaryChatEnabled.set(!$temporaryChatEnabled);
 										}
 
-										await goto('/');
+										await goto(WEBUI_BASE_URL + '/');
 
 										// add 'temporary-chat=true' to the URL
 										if ($temporaryChatEnabled) {

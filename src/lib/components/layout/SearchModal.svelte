@@ -27,7 +27,7 @@
 		{
 			label: $i18n.t('Start a new conversation'),
 			onClick: async () => {
-				await goto(`/${query ? `?q=${query}` : ''}`);
+				await goto(`${WEBUI_BASE_URL}/${query ? `?q=${query}` : ''}`);
 				show = false;
 				onClose();
 			},
@@ -232,7 +232,7 @@
 						{
 							label: $i18n.t('Create a new note'),
 							onClick: async () => {
-								await goto(`/notes?content=${query}`);
+								await goto(`${WEBUI_BASE_URL}/notes?content=${query}`);
 								show = false;
 								onClose();
 							},
@@ -376,7 +376,7 @@
 								selectedIdx = idx + actions.length;
 							}}
 							on:click={async () => {
-								await goto(`/c/${chat.id}`);
+								await goto(`${WEBUI_BASE_URL}/c/${chat.id}`);
 								show = false;
 								onClose();
 							}}

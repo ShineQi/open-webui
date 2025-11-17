@@ -147,7 +147,7 @@
 
 	onMount(async () => {
 		if ($user === undefined || $user === null) {
-			await goto('/auth');
+			await goto(WEBUI_BASE_URL + '/auth');
 			return;
 		}
 		if (!['user', 'admin'].includes($user?.role)) {
@@ -242,7 +242,7 @@
 					} else {
 						temporaryChatEnabled.set(!$temporaryChatEnabled);
 					}
-					await goto('/');
+					await goto(WEBUI_BASE_URL + '/');
 					setTimeout(() => {
 						document.getElementById('new-chat-button')?.click();
 					}, 0);
